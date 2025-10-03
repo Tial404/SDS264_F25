@@ -1,0 +1,158 @@
+---
+title: "Tial Mini Project 1"
+format:
+  html: default
+editor_options: 
+  chunk_output_type: console
+---
+## Instructions :
+-- 3 str_
+
+--at least 3 different regular expressions
+
+--at least 2 different text analysis applications (count words, bing sentiment, afinn sentiment, nrc sentiment, wordclouds, trajectories over sections or time, tf-idf, bigrams, correlations, networks, LDA, etc.). Note that many interesting insights can be gained by strategic and thoughtful use of regular expressions paired with simple counts and summary statistics.
+
+--at least 3 , well-labeled plots or tables, one of which is described with alt-text using the Four Ingredients Model
+a description of what insights can be gained from your plots and tables. Be sure you weave a compelling and interesting story!
+
+```{r}
+#| include: FALSE
+
+library(tidyverse)
+library(tidytext)
+library(textdata)
+library(wordcloud)
+library(wordcloud2)
+library(dplyr)
+library(viridis)
+library(ggthemes)
+library(gutenbergr)
+```
+
+## Text analysis applications of "The Metamorphosis" from Kaggle :
+
+```{r}
+Metamorphosis <- 
+  read.table("/Users/a209112/Downloads/datasets/metamorphosis_clean.txt", header = FALSE, sep = "\t", fill = TRUE) |>
+
+rename (text = "V1")  
+```
+
+Tokenize :
+```{r}
+metamorph_tidy <- Metamorphosis |>
+  mutate(line = row_number()) |>
+  unnest_tokens(word, text, token = "words")   
+
+metamorph_tidy   
+
+Metamorphosis |> slice_tail(n = 10)
+metamorph_tidy |> slice_tail(n = 20)
+```
+
+## Different str_ functions : 
+1. Capitalizing all the words! 
+```{r}
+tokenized |>
+  select(word) |>
+  mutate(text_to_upper = str_to_upper(word))
+```
+2. Counting how many vowels ######
+```{r}
+tokenized |>
+  select(word) |>
+  mutate(vowels = str_extract(word, "^[aeiou]")) |>
+  count(vowels)
+```
+3. Detecting how often Gregor's name comes up 
+```{r}
+tokenized |>
+  select(word) |>
+  mutate(text_to_lower = str_to_lower(word)) |>
+  filter(str_detect(text_to_lower, "gregor"))
+```
+
+## Text Analysis Application :
+1. Sentiments ####
+```{r}
+get_sentiments(lexicon = "afinn")
+get_sentiments(lexicon = "nrc")
+get_sentiments(lexicon = "bing")
+
+sentiments <- get_sentiments(lexicon = "bing")
+
+
+metamorph_tidy |>   
+  inner_join(sentiments) |>
+  count(sentiment)
+```
+2. Calculate tf-idf
+```{r}
+novel_words <- metamorph_tidy |>
+  group_by(word)
+  mutate(linenumber = line()) |>
+  ungroup() |>
+  unnest_tokens(word) 
+  
+novel_word_count <- novel_words |>
+  count(word, sort = TRUE)
+
+novels_tfidf <- novel_word_count |>
+  bind_tf_idf(word, n)
+
+book_tfidf |>
+  arrange(-tf_idf)
+```
+
+## Illutrations
+1. Wordcloud for "The Metamorphosis" short novel
+```{r}
+words <- metamorph_tidy |>
+  anti_join(stop_words) |>
+  count(word) |>
+  filter(word != "NA") |>
+  arrange(desc(n))
+
+morph_df <- words |>
+  slice_head(n = 80) |>
+  data.frame()
+
+wordcloud2(
+  morph_df, 
+  size = .67, 
+  shape = 'circle',
+  minSize = 3
+)
+```
+
+2. Horizontal bar chart to visualize word that contribute the most to sentiment scores 
+```{r}
+metamorph_tidy |>
+  inner_join(sentiments) |>
+  count(sentiment, word, sort = TRUE) |>
+  group_by(sentiment) |>
+  slice_max(n, n = 10) |>
+  ungroup() |>
+  
+ggplot(aes(x = fct_reorder(word, n), y = n,
+           fill = sentiment)) +
+    geom_col() +  
+    coord_flip() +
+    facet_wrap(~ sentiment, scales = "free") +
+labs(title = 'Words influencing sentiment scores', x = 'Words', y = 'Total' ) +
+  theme_bw()
+```
+
+3. Chart looking at the positive/negative sentiment trajectory over the short novel ####
+
+```{r}
+metamorph_tidy |>
+  inner_join(sentiments) |>
+  count(word, index = line, sentiment) |>
+  pivot_wider(names_from = sentiment, values_from = n, values_fill = 0) |>
+mutate(sentiment = positive - negative) |>
+  
+ggplot(aes(x = index, y = sentiment)) +
+   geom_col(show.legend = FALSE) +
+  theme_calc()
+```
