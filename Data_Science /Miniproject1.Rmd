@@ -1,9 +1,12 @@
 ---
-title: "Tial's Mini Project 1"
-format:
-  html: default
-editor_options: 
+title: "Tial Mini Project 1"
+output:
+  pdf_document:
+  editor_options: 
   chunk_output_type: console
+  markdown: 
+  wrap: 72
+  author: TIAL
 ---
 ```{r}
 #| include: FALSE
@@ -19,7 +22,7 @@ library(ggthemes)
 library(gutenbergr)
 ```
 
-## "The Metamorphosis" from Kaggle :
+##"The Metamorphosis" from Kaggle :
 
 ```{r}
 Metamorphosis <- 
@@ -64,12 +67,11 @@ metamorph_tidy |>
 
 ## Regular Expression : 
 
-1.Counting how many words are in each line of text (top 5)
+1.Counting how many words are in each line of text
 ```{r}
 Metamorphosis |>
   mutate(num_words = str_count(text, "\\b[A-Za-z'\\$]+\\b")) |>
-  select(num_words) |>
-  slice_max(order_by = num_words, n = 5)
+  select(num_words)
 ```
 
 2.Highlighting words where the 3rd and 2nd characters appear again later in the word 
@@ -77,12 +79,11 @@ Metamorphosis |>
 str_view(metamorph_tidy$word, "(.)(.)(.).*\\3\\2")
 ```
 
-3.Extracting the first word from each line of text (top 5)
+3.Extracting the first word from each line of text
 ```{r}
 Metamorphosis |>
   mutate(first_word = str_extract(text,"\\b[^ ]+\\b")) |>
-  select(first_word)|>
-  slice_head(n = 5)
+  select(first_word)
 ```
 
 ## Text Analysis Application :
@@ -119,7 +120,6 @@ wordcloud2(
   minSize = 3
 )
 ```
-
 
 ## Illustration 
 1.Horizontal bar chart to visualize word that contribute the most to sentiment scores 
@@ -158,8 +158,8 @@ ggplot(aes(x = index, y = sentiment)) +
 3.Most common words
 
 ```{r}
-get_stopwords() |> print(n = 20)  
-get_stopwords(source = "smart") |> print(n = 20)   
+get_stopwords() |> print(n = 50)  
+get_stopwords(source = "smart") |> print(n = 50)   
 smart_stopwords <- get_stopwords(source = "smart")
 ```
 
@@ -179,6 +179,6 @@ metamorph_tidy |>
   theme_minimal()
 ```
 
-## Insight : 
+##Insight : 
 
 The short novel "The Metamorphosis" by Franz Kafka seems to be centered around the main protagonist named "Gregory" and his relationship with his family (Fig.3 & wordcloud). The setting takes place in Gregory's home, specifically his room, where he lies in bed due to tiredness and experiencing pain (Fig.1). Despite how the overall emotional tone of the novel is neutral (Fig. 2), it could imply inner conflict or complex feelings. This assumption is based on how there are more words with negative connotations than positive connotations, despite it being balanced by the higher frequency of the words with positive sentiments (Fig.1).
