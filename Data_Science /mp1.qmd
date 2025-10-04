@@ -40,7 +40,7 @@ rename (text = "V1")
 
 Tokenize :
 ```{r}
-metamorph_tidy <- Metamorphosis |>
+metamorph_tidy <- as_tibble(Metamorphosis) |>
   mutate(line = row_number()) |>
   unnest_tokens(word, text, token = "words")   
 
@@ -86,23 +86,7 @@ metamorph_tidy |>
   inner_join(sentiments) |>
   count(sentiment)
 ```
-2. Calculate tf-idf
-```{r}
-novel_words <- metamorph_tidy |>
-  group_by(word)
-  mutate(linenumber = line()) |>
-  ungroup() |>
-  unnest_tokens(word) 
-  
-novel_word_count <- novel_words |>
-  count(word, sort = TRUE)
 
-novels_tfidf <- novel_word_count |>
-  bind_tf_idf(word, n)
-
-book_tfidf |>
-  arrange(-tf_idf)
-```
 
 ## Illutrations
 1. Wordcloud for "The Metamorphosis" short novel
@@ -148,7 +132,7 @@ labs(title = 'Words influencing sentiment scores', x = 'Words', y = 'Total' ) +
 ```{r}
 metamorph_tidy |>
   inner_join(sentiments) |>
-  count(word, index = line, sentiment) |>
+  count(index = line%/%10, sentiment) |>
   pivot_wider(names_from = sentiment, values_from = n, values_fill = 0) |>
 mutate(sentiment = positive - negative) |>
   
