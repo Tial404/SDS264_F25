@@ -1,7 +1,6 @@
 ---
 title: "Tial's Mini Project 1"
-format:
-  html: default
+format: pdf
 editor_options: 
   chunk_output_type: console
 ---
@@ -109,16 +108,13 @@ words <- metamorph_tidy |>
   filter(word != "NA") |>
   arrange(desc(n))
 
-morph_df <- words |>
-  slice_head(n = 80) |>
-  data.frame()
-
-wordcloud2(
-  morph_df, 
-  size = .67, 
-  shape = 'circle',
-  minSize = 3
+wordcloud(
+  words = words$word, 
+  freq = words$n, 
+  max.words = 100, 
+  random.order = FALSE
 )
+
 ```
 
 
