@@ -1,0 +1,173 @@
+---
+title: "R Tip of the Day !"
+subtitle: "The gganimate package"
+author: "TIAL CHIN"
+date: "October 31, 2025"
+format:
+  revealjs: 
+    slide-number: true
+    chalkboard: 
+      buttons: true
+    preview-links: auto
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(scatterplot3d)
+library(ggplot2)
+library(readr)
+library(tidyverse)
+library(gapminder)
+library(gganimate)
+library(ggridges)
+```
+
+```{r}
+Abalone <- read_csv("~/Downloads/R/Abalone-Dataset-master/Abalone.csv")
+```
+
+## {auto-animate=true}
+
+::: {style="margin-top: 100px;color: pink;"}
+Introducing **scatterplot3d !**
+:::
+
+## {auto-animate=true}
+
+::: {style="margin-top: 200px; font-size: 2.5em; color: pink;"}
+Introducing **scatterplot3d !**
+:::
+
+## What is it? 
+::: incremental
+-   Creates a 3D scatter plot using a parallel projection
+-   **Advantages :**
+-   Can reveal complex patterns
+-   Customizable 
+-   Creates publication quality graphs
+-   **Disadvantages :**
+-   Limited interactivity
+-   Relies on 2D graphics 
+:::
+
+::: footer
+Link to : [Source](https://cran.r-project.org/web/packages/scatterplot3d/vignettes/s3d.pdf)
+:::
+
+
+## The Abalone Dataset {.smaller}
+::: columns
+
+::: {.column width="10%"}
+:::
+
+::: {.column width="95%"}
+```{r}
+knitr::kable(head(Abalone)[,c("Sex","Length","Diameter","Height","Whole weight","Shucked weight","Viscera weight","Shell weight","Rings")])
+```
+
+:::
+:::
+
+::: footer
+Link to : [Abalone dataset](https://archive.ics.uci.edu/dataset/1/abalone)
+:::
+
+## Creating a basic 3D scatterplot : 
+``` {.python code-line-numbers="1|2|3-6"}
+library(scatterplot3d)
+scatterplot3d(dataset[,c(x, y, x)],
+              main = "title",
+              xlab = "x axis",
+              ylab = "y axis"
+              zlab = "z axis")
+```
+
+- You can adjust the x, y, and z axis by changing the orders on the list
+
+## A basic 3D scatterplot :
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 10
+library(scatterplot3d)
+scatterplot3d(Abalone[,c("Length","Diameter","Rings")],
+               main ="Relationship between Length, Diameter, and Rings",
+              xlab = "Length (mm)",
+              ylab = "Diameter (mm)",
+              zlab = "Rings")
+```
+
+::: footer
+Link to : [Source](https://www.sthda.com/english/wiki/scatterplot3d-3d-graphics-r-software-and-data-visualization)
+:::
+
+# To add a regression plane : 
+``` {.python code-line-numbers="1|2|"}
+model <- lm(z ~ x + y)
+s3d$plane3d(model)
+```
+
+## A basic 3D scatterplot with a regression plane :
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 10
+plane <- scatterplot3d(Abalone[,c("Length","Diameter","Rings")])
+fit <- lm(Rings ~ Length + Diameter, data = Abalone)
+plane$plane3d(fit)
+```
+
+## Relationship between Length, Diameter, and Rings for Infants, Males and Females :
+```{r}
+#| echo: true
+#| fig-width: 15
+#| fig-height: 15
+Abalone$Sex <- as.factor(Abalone$Sex)
+colors <- c("blue", "red", "gray")
+colors <- colors[as.numeric(Abalone$Sex)]
+scatterplot3d(Abalone[,c(2,3,9)],
+              color = colors)
+legend("right", legend = levels(Abalone$Sex),
+      col =  c("blue", "red", "gray"), pch = 16, cex = 0.5,
+       inset = 0.0005)
+```
+
+::: footer
+Link to : [Source](https://stat.ethz.ch/R-manual/R-devel/library/graphics/html/legend.html)
+:::
+
+## What does each line do? 
+
+``` {.python code-line-numbers="1-2|4-5|7-8|10-11|13|14|15-16"}
+Abalone$Sex <- as.factor(Abalone$Sex)
+Converts the "Sex" variable from a character vector to a factor 
+
+colors <- c("blue", "red", "yellow")
+Assigning colors
+
+colors <- colors[as.numeric(Abalone$Sex)]
+Now we can convert the different levels into numeric variables 
+
+scatterplot3d(Abalone[,c(2,3,9)],
+              color = colors)
+
+Making a figure legend
+legend("right", legend = levels(Abalone$Sex),
+      col =  c("blue", "red", "gray"), pch = 16, cex = 0.5,
+       inset = 0.0005)
+```
+
+## Absolute Position
+
+![](https://gewutang.com/2010/06/13/scatterplot3d/index_files/figure-html/unnamed-chunk-4-1.png){.absolute top="170" left="30" width="450" height="400"}
+![](https://gewutang.com/2010/06/13/scatterplot3d/index_files/figure-html/unnamed-chunk-8-2.png){.absolute .fragment top="150" right="80" width="450"}
+
+![](https://forum.posit.co/uploads/default/original/3X/6/1/6198d9c0c8439c795c6c051ec32d272a9e1fe9ce.jpeg){.absolute .fragment bottom="110" right="130" width="300"}
+
+
+
+

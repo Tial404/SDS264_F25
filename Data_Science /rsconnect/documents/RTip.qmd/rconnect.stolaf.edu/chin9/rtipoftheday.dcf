@@ -1,0 +1,12 @@
+name: rtipoftheday
+title: RTipoftheDay
+username: chin9
+account: chin9
+server: rconnect.stolaf.edu
+hostUrl: https://rconnect.stolaf.edu/__api__
+appId: 1138
+bundleId: 3365
+url: https://rconnect.stolaf.edu/content/f1e680de-dd18-40ff-8cfc-403f8e444496/
+version: 1
+asMultiple: FALSE
+asStatic: TRUE
