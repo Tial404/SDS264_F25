@@ -168,6 +168,10 @@ legend("right", legend = levels(Abalone$Sex),
 
 ![](https://forum.posit.co/uploads/default/original/3X/6/1/6198d9c0c8439c795c6c051ec32d272a9e1fe9ce.jpeg){.absolute .fragment bottom="110" right="130" width="300"}
 
+## End
+::: incremental
+Thank you for listening!
+:::
 
 
 
