@@ -77,7 +77,7 @@ Link to : [Abalone dataset](https://archive.ics.uci.edu/dataset/1/abalone)
 ## Creating a basic 3D scatterplot : 
 ``` {.python code-line-numbers="1|2|3-6"}
 library(scatterplot3d)
-scatterplot3d(dataset[,c(x, y, x)],
+scatterplot3d(dataset[,c(x, y, z)],
               main = "title",
               xlab = "x axis",
               ylab = "y axis"
